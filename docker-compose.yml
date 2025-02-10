@@ -40,6 +40,7 @@ services:
     depends_on:
       - eureka-service
       - config-service
+      - zipkin
     networks:
       - microservices
 
@@ -54,6 +55,7 @@ services:
     depends_on:
       - config-service
       - eureka-service
+      - zipkin
     networks:
       - microservices
 
@@ -68,6 +70,7 @@ services:
     depends_on:
       - eureka-service
       - config-service
+      - zipkin
     networks:
       - microservices
 
@@ -82,6 +85,7 @@ services:
     depends_on:
       - eureka-service
       - config-service
+      - zipkin
     networks:
       - microservices
 
