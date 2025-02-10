@@ -1,0 +1,94 @@
+version: '3.8'
+
+networks:
+  microservices:
+    driver: bridge
+
+services:
+  config-service:
+    build:
+      context: ./config-service
+    container_name: config-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservices
+
+  eureka-service:
+    build:
+      context: ./eureka-service
+    container_name: eureka-service
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+    networks:
+      - microservices
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-service
+      - config-service
+    networks:
+      - microservices
+
+  carro-service:
+    build:
+      context: ./carro-service
+    container_name: carro-service
+    ports:
+      - "8091:8091"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+      - eureka-service
+    networks:
+      - microservices
+
+  moto-service:
+    build:
+      context: ./moto-service
+    container_name: moto-service
+    ports:
+      - "8092:8092"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-service
+      - config-service
+    networks:
+      - microservices
+
+  usuario-service:
+    build:
+      context: ./usuario-service
+    container_name: usuario-service
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-service
+      - config-service
+    networks:
+      - microservices
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
+
