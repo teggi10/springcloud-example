@@ -13,6 +13,12 @@ services:
       - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    healthcheck:
+      #disable: true
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 15s
+      retries: 10
+      timeout: 10s
     networks:
       - microservices
 
@@ -23,7 +29,7 @@ services:
     ports:
       - "8761:8761"
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
+      SPRING_PROFILES_ACTIVE: docker
     depends_on:
       - config-service
     networks:
@@ -53,9 +59,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - config-service
-      - eureka-service
-      - zipkin
+        config-service:
+          condition: service_healthy
+        eureka-service:
+          condition: service_healthy
     networks:
       - microservices
 
